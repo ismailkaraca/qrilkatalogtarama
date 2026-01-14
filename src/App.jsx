@@ -110,7 +110,7 @@ const App = () => {
         fullName: '',
         phone: ''
     });
-    const [formStatus, setFormStatus] = useState('idle'); // idle, loading, success, error
+    const [formStatus, setFormStatus] = useState('idle');
 
     const filteredLibraries = useMemo(() => {
         return LIBRARIES.filter(lib =>
@@ -140,29 +140,34 @@ const App = () => {
         e.preventDefault();
         setFormStatus('loading');
 
-        // GOOGLE SHEETS WEB APP URL
-        // Vercel Environment Variable: REACT_APP_GOOGLE_SCRIPT_URL
+        // URL'i güvenli bir şekilde al: process.env (Vercel / Create-React-App standardı)
+        // import.meta derleme hatasına yol açtığı için kaldırıldı.
         const SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
 
+        // Hata ayıklama için konsola log basıyoruz
+        console.log("Hedef Script URL:", SCRIPT_URL ? "Tanımlı" : "Tanımsız! Lütfen Environment Variable kontrolü yapın.");
+
         if (!SCRIPT_URL) {
-            console.error("HATA: Google Apps Script URL tanımlanmamış. Lütfen 'REACT_APP_GOOGLE_SCRIPT_URL' çevre değişkenini kontrol edin.");
             setFormStatus('error');
+            alert("Hata: Google Sheets URL'i bulunamadı. Lütfen Vercel ayarlarında 'REACT_APP_GOOGLE_SCRIPT_URL' değişkenini tanımlayıp projeyi yeniden dağıtın (Redeploy).");
             return;
         }
 
         try {
-            // Not: Google Sheets'e bağlamak için Google Apps Script 'Web App' olarak yayınlanmalıdır.
-            // Bu örnekte verileri JSON olarak POST ediyoruz.
+            // CORS sorunlarını aşmak için text/plain ve no-cors kullanıyoruz
             await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // CORS sorunlarını aşmak için
-                headers: { 'Content-Type': 'application/json' },
+                mode: 'no-cors',
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
                 body: JSON.stringify({
                     ...formData,
                     timestamp: new Date().toISOString()
                 })
             });
 
+            // Başarılı kabul et (no-cors modunda yanıt okunamaz, hata fırlatılmazsa başarılıdır)
             setFormStatus('success');
             setTimeout(() => {
                 setIsFormOpen(false);
