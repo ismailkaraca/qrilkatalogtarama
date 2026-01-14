@@ -1,374 +1,426 @@
 import React, { useState, useMemo } from 'react';
-import { Printer, Search, MapPin, Library, Globe, Info, X } from 'lucide-react';
+import { Printer, Search, MapPin, Library, Globe, Info, X, ExternalLink, HelpCircle, Layers, CheckCircle, Navigation } from 'lucide-react';
 
 /**
  * TÜRKİYE'NİN İL HALK KÜTÜPHANELERİ LİSTESİ
  */
 const LIBRARIES = [
-    { city: "Adana", name: "Adana İl Halk Kütüphanesi" },
-    { city: "Adıyaman", name: "Adıyaman İl Halk Kütüphanesi" },
-    { city: "Afyonkarahisar", name: "Afyonkarahisar Gedik Ahmet Paşa İl Halk Kütüphanesi" },
-    { city: "Ağrı", name: "Ağrı İl Halk Kütüphanesi" },
-    { city: "Aksaray", name: "Aksaray İl Halk Kütüphanesi" },
-    { city: "Amasya", name: "Amasya İl Halk Kütüphanesi" },
-    { city: "Ankara", name: "Ankara Adnan Ötüken İl Halk Kütüphanesi" },
-    { city: "Antalya", name: "Antalya Tekelioğlu İl Halk Kütüphanesi" },
-    { city: "Ardahan", name: "Ardahan İl Halk Kütüphanesi" },
-    { city: "Artvin", name: "Artvin İl Halk Kütüphanesi" },
-    { city: "Aydın", name: "Aydın İl Halk Kütüphanesi" },
-    { city: "Balıkesir", name: "Balıkesir İl Halk Kütüphanesi" },
-    { city: "Bartın", name: "Bartın İl Halk Kütüphanesi" },
-    { city: "Batman", name: "Batman Şehit Şenay Aybüke Yalçın İl Halk Kütüphanesi" },
-    { city: "Bayburt", name: "Bayburt İl Halk Kütüphanesi" },
-    { city: "Bilecik", name: "Bilecik İl Halk Kütüphanesi" },
-    { city: "Bingöl", name: "Bingöl 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Bitlis", name: "Bitlis İl Halk Kütüphanesi" },
-    { city: "Bolu", name: "Bolu İl Halk Kütüphanesi" },
-    { city: "Burdur", name: "Burdur İl Halk Kütüphanesi" },
-    { city: "Bursa", name: "Bursa İl Halk Kütüphanesi" },
-    { city: "Çanakkale", name: "Çanakkale M.A.Ersoy İl Halk Kütüphanesi" },
-    { city: "Çankırı", name: "Çankırı İl Halk Kütüphanesi" },
-    { city: "Çorum", name: "Çorum İl Halk Kütüphanesi" },
-    { city: "Denizli", name: "Denizli 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Diyarbakır", name: "Diyarbakır Prof. Dr. Fuat Sezgin İl Halk Kütüphanesi" },
-    { city: "Düzce", name: "Düzce İl Halk Kütüphanesi" },
-    { city: "Edirne", name: "Edirne İl Halk Kütüphanesi" },
-    { city: "Elazığ", name: "Elazığ İl Halk Kütüphanesi" },
-    { city: "Erzincan", name: "Erzincan 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Erzurum", name: "Erzurum İl Halk Kütüphanesi" },
-    { city: "Eskişehir", name: "Eskişehir İl Halk Kütüphanesi" },
-    { city: "Gaziantep", name: "Gaziantep Münifpaşa 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Giresun", name: "Giresun İl Halk Kütüphanesi" },
-    { city: "Gümüşhane", name: "Gümüşhane İl Halk Kütüphanesi" },
-    { city: "Hakkari", name: "Hakkari İl Halk Kütüphanesi" },
-    { city: "Hatay", name: "Hatay Cemil Meriç İl Halk Kütüphanesi" },
-    { city: "Iğdır", name: "Iğdır 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Isparta", name: "Isparta Halil Hamit Paşa İl Halk Kütüphanesi" },
-    { city: "İstanbul", name: "İstanbul Orhan Kemal İl Halk Kütüphanesi" },
-    { city: "İzmir", name: "İzmir Atatürk İl Halk Kütüphanesi" },
-    { city: "Kahramanmaraş", name: "Kahramanmaraş Karacaoğlan İl Halk Kütüphanesi" },
-    { city: "Karabük", name: "Karabük İl Halk Kütüphanesi" },
-    { city: "Karaman", name: "Karaman Karamanoğlu Mehmet Bey İl Halk Kütüphanesi" },
-    { city: "Kars", name: "Kars İl Halk Kütüphanesi" },
-    { city: "Kastamonu", name: "Kastamonu 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Kayseri", name: "Kayseri İl Halk Kütüphanesi" },
-    { city: "Kırıkkale", name: "Kırıkkale İl Halk Kütüphanesi" },
-    { city: "Kırklareli", name: "Kırklareli İl Halk Kütüphanesi" },
-    { city: "Kırşehir", name: "Kırşehir Aşık Paşa İl Halk Kütüphanesi" },
-    { city: "Kilis", name: "Kilis İl Halk Kütüphanesi" },
-    { city: "Kocaeli", name: "Kocaeli İl Halk Kütüphanesi" },
-    { city: "Konya", name: "Konya İl Halk Kütüphanesi" },
-    { city: "Kütahya", name: "Kütahya İl Halk Kütüphanesi" },
-    { city: "Malatya", name: "Malatya 100. Yıl İl Halk Kütüphanesi" },
-    { city: "Manisa", name: "Manisa İl Halk Kütüphanesi" },
-    { city: "Mardin", name: "Mardin İl Halk Kütüphanesi" },
-    { city: "Mersin", name: "Mersin İl Halk Kütüphanesi" },
-    { city: "Muğla", name: "Muğla Hoca Mustafa Efendi İl Halk Kütüphanesi" },
-    { city: "Muş", name: "Muş İl Halk Kütüphanesi" },
-    { city: "Nevşehir", name: "Nevşehir İl Halk Kütüphanesi" },
-    { city: "Niğde", name: "Niğde İl Halk Kütüphanesi" },
-    { city: "Ordu", name: "Ordu Gazi İl Halk Kütüphanesi" },
-    { city: "Osmaniye", name: "Osmaniye Emine Keskiner İl Halk Kütüphanesi" },
-    { city: "Rize", name: "Rize İl Halk Kütüphanesi" },
-    { city: "Sakarya", name: "Sakarya İl Halk Kütüphanesi" },
-    { city: "Samsun", name: "Samsun Gazi İl Halk Kütüphanesi" },
-    { city: "Siirt", name: "Siirt İl Halk Kütüphanesi" },
-    { city: "Sinop", name: "Sinop Dr. Rıza Nur İl Halk Kütüphanesi" },
-    { city: "Sivas", name: "Sivas İl Halk Kütüphanesi" },
-    { city: "Şanlıurfa", name: "Şanlıurfa İl Halk Kütüphanesi" },
-    { city: "Şırnak", name: "Şırnak İl Halk Kütüphanesi" },
-    { city: "Tekirdağ", name: "Tekirdağ Namık Kemal İl Halk Kütüphanesi" },
-    { city: "Tokat", name: "Tokat İl Halk Kütüphanesi" },
-    { city: "Trabzon", name: "Trabzon İl Halk Kütüphanesi" },
-    { city: "Tunceli", name: "Tunceli Hüseyin Güntaş İl Halk Kütüphanesi" },
-    { city: "Uşak", name: "Uşak İskender Pala İl Halk Kütüphanesi" },
-    { city: "Van", name: "Van İl Halk Kütüphanesi" },
-    { city: "Yalova", name: "Yalova İl Halk Kütüphanesi" },
-    { city: "Yozgat", name: "Yozgat İl Halk Kütüphanesi" },
-    { city: "Zonguldak", name: "Zonguldak İl Halk Kütüphanesi" }
+  { city: "Adana", name: "Adana İl Halk Kütüphanesi" },
+  { city: "Adıyaman", name: "Adıyaman İl Halk Kütüphanesi" },
+  { city: "Afyonkarahisar", name: "Afyonkarahisar Gedik Ahmet Paşa İl Halk Kütüphanesi" },
+  { city: "Ağrı", name: "Ağrı İl Halk Kütüphanesi" },
+  { city: "Aksaray", name: "Aksaray İl Halk Kütüphanesi" },
+  { city: "Amasya", name: "Amasya İl Halk Kütüphanesi" },
+  { city: "Ankara", name: "Ankara Adnan Ötüken İl Halk Kütüphanesi" },
+  { city: "Antalya", name: "Antalya Tekelioğlu İl Halk Kütüphanesi" },
+  { city: "Ardahan", name: "Ardahan İl Halk Kütüphanesi" },
+  { city: "Artvin", name: "Artvin İl Halk Kütüphanesi" },
+  { city: "Aydın", name: "Aydın İl Halk Kütüphanesi" },
+  { city: "Balıkesir", name: "Balıkesir İl Halk Kütüphanesi" },
+  { city: "Bartın", name: "Bartın İl Halk Kütüphanesi" },
+  { city: "Batman", name: "Batman Şehit Şenay Aybüke Yalçın İl Halk Kütüphanesi" },
+  { city: "Bayburt", name: "Bayburt İl Halk Kütüphanesi" },
+  { city: "Bilecik", name: "Bilecik İl Halk Kütüphanesi" },
+  { city: "Bingöl", name: "Bingöl 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Bitlis", name: "Bitlis İl Halk Kütüphanesi" },
+  { city: "Bolu", name: "Bolu İl Halk Kütüphanesi" },
+  { city: "Burdur", name: "Burdur İl Halk Kütüphanesi" },
+  { city: "Bursa", name: "Bursa İl Halk Kütüphanesi" },
+  { city: "Çanakkale", name: "Çanakkale M.A.Ersoy İl Halk Kütüphanesi" },
+  { city: "Çankırı", name: "Çankırı İl Halk Kütüphanesi" },
+  { city: "Çorum", name: "Çorum İl Halk Kütüphanesi" },
+  { city: "Denizli", name: "Denizli 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Diyarbakır", name: "Diyarbakır Prof. Dr. Fuat Sezgin İl Halk Kütüphanesi" },
+  { city: "Düzce", name: "Düzce İl Halk Kütüphanesi" },
+  { city: "Edirne", name: "Edirne İl Halk Kütüphanesi" },
+  { city: "Elazığ", name: "Elazığ İl Halk Kütüphanesi" },
+  { city: "Erzincan", name: "Erzincan 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Erzurum", name: "Erzurum İl Halk Kütüphanesi" },
+  { city: "Eskişehir", name: "Eskişehir İl Halk Kütüphanesi" },
+  { city: "Gaziantep", name: "Gaziantep Münifpaşa 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Giresun", name: "Giresun İl Halk Kütüphanesi" },
+  { city: "Gümüşhane", name: "Gümüşhane İl Halk Kütüphanesi" },
+  { city: "Hakkari", name: "Hakkari İl Halk Kütüphanesi" },
+  { city: "Hatay", name: "Hatay Cemil Meriç İl Halk Kütüphanesi" },
+  { city: "Iğdır", name: "Iğdır 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Isparta", name: "Isparta Halil Hamit Paşa İl Halk Kütüphanesi" },
+  { city: "İstanbul", name: "İstanbul Orhan Kemal İl Halk Kütüphanesi" },
+  { city: "İzmir", name: "İzmir Atatürk İl Halk Kütüphanesi" },
+  { city: "Kahramanmaraş", name: "Kahramanmaraş Karacaoğlan İl Halk Kütüphanesi" },
+  { city: "Karabük", name: "Karabük İl Halk Kütüphanesi" },
+  { city: "Karaman", name: "Karaman Karamanoğlu Mehmet Bey İl Halk Kütüphanesi" },
+  { city: "Kars", name: "Kars İl Halk Kütüphanesi" },
+  { city: "Kastamonu", name: "Kastamonu 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Kayseri", name: "Kayseri İl Halk Kütüphanesi" },
+  { city: "Kırıkkale", name: "Kırıkkale İl Halk Kütüphanesi" },
+  { city: "Kırklareli", name: "Kırklareli İl Halk Kütüphanesi" },
+  { city: "Kırşehir", name: "Kırşehir Aşık Paşa İl Halk Kütüphanesi" },
+  { city: "Kilis", name: "Kilis İl Halk Kütüphanesi" },
+  { city: "Kocaeli", name: "Kocaeli İl Halk Kütüphanesi" },
+  { city: "Konya", name: "Konya İl Halk Kütüphanesi" },
+  { city: "Kütahya", name: "Kütahya İl Halk Kütüphanesi" },
+  { city: "Malatya", name: "Malatya 100. Yıl İl Halk Kütüphanesi" },
+  { city: "Manisa", name: "Manisa İl Halk Kütüphanesi" },
+  { city: "Mardin", name: "Mardin İl Halk Kütüphanesi" },
+  { city: "Mersin", name: "Mersin İl Halk Kütüphanesi" },
+  { city: "Muğla", name: "Muğla Hoca Mustafa Efendi İl Halk Kütüphanesi" },
+  { city: "Muş", name: "Muş İl Halk Kütüphanesi" },
+  { city: "Nevşehir", name: "Nevşehir İl Halk Kütüphanesi" },
+  { city: "Niğde", name: "Niğde İl Halk Kütüphanesi" },
+  { city: "Ordu", name: "Ordu Gazi İl Halk Kütüphanesi" },
+  { city: "Osmaniye", name: "Osmaniye Emine Keskiner İl Halk Kütüphanesi" },
+  { city: "Rize", name: "Rize İl Halk Kütüphanesi" },
+  { city: "Sakarya", name: "Sakarya İl Halk Kütüphanesi" },
+  { city: "Samsun", name: "Samsun Gazi İl Halk Kütüphanesi" },
+  { city: "Siirt", name: "Siirt İl Halk Kütüphanesi" },
+  { city: "Sinop", name: "Sinop Dr. Rıza Nur İl Halk Kütüphanesi" },
+  { city: "Sivas", name: "Sivas İl Halk Kütüphanesi" },
+  { city: "Şanlıurfa", name: "Şanlıurfa İl Halk Kütüphanesi" },
+  { city: "Şırnak", name: "Şırnak İl Halk Kütüphanesi" },
+  { city: "Tekirdağ", name: "Tekirdağ Namık Kemal İl Halk Kütüphanesi" },
+  { city: "Tokat", name: "Tokat İl Halk Kütüphanesi" },
+  { city: "Trabzon", name: "Trabzon İl Halk Kütüphanesi" },
+  { city: "Tunceli", name: "Tunceli Hüseyin Güntaş İl Halk Kütüphanesi" },
+  { city: "Uşak", name: "Uşak İskender Pala İl Halk Kütüphanesi" },
+  { city: "Van", name: "Van İl Halk Kütüphanesi" },
+  { city: "Yalova", name: "Yalova İl Halk Kütüphanesi" },
+  { city: "Yozgat", name: "Yozgat İl Halk Kütüphanesi" },
+  { city: "Zonguldak", name: "Zonguldak İl Halk Kütüphanesi" }
 ].sort((a, b) => a.city.localeCompare(b.city, 'tr'));
 
 const normalizeUrl = (text) => {
-    const mapping = {
-        'ç': 'c', 'ğ': 'g', 'ı': 'i', 'i': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
-        'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'I': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
-    };
-    let normalized = text.split('').map(char => mapping[char] || char.toLowerCase()).join('');
-    return normalized.replace(/\s+/g, '');
+  const mapping = {
+    'ç': 'c', 'ğ': 'g', 'ı': 'i', 'i': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
+    'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'I': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
+  };
+  let normalized = text.split('').map(char => mapping[char] || char.toLowerCase()).join('');
+  return normalized.replace(/\s+/g, '');
 };
 
 const App = () => {
-    const [selectedLib, setSelectedLib] = useState(LIBRARIES.find(l => l.city === "Ankara"));
-    const [searchTerm, setSearchTerm] = useState("");
-    const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedLib, setSelectedLib] = useState(LIBRARIES.find(l => l.city === "Ankara"));
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-    const filteredLibraries = useMemo(() => {
-        return LIBRARIES.filter(lib =>
-            lib.name.toLocaleLowerCase('tr').includes(searchTerm.toLocaleLowerCase('tr'))
-        );
-    }, [searchTerm]);
+  const filteredLibraries = useMemo(() => {
+    return LIBRARIES.filter(lib => 
+      lib.name.toLocaleLowerCase('tr').includes(searchTerm.toLocaleLowerCase('tr'))
+    );
+  }, [searchTerm]);
 
-    const normalizedCity = normalizeUrl(selectedLib.city);
-    const targetUrl = `https://koha.ekutuphane.gov.tr/ara/${normalizedCity}.html`;
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(targetUrl)}&bgcolor=ffffff&color=1e3a8a&qzone=1`;
+  const normalizedCity = normalizeUrl(selectedLib.city);
+  const targetUrl = `https://koha.ekutuphane.gov.tr/ara/${normalizedCity}.html`;
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(targetUrl)}&bgcolor=ffffff&color=1e3a8a&qzone=1`;
 
-    /**
-     * Yazdırma Fonksiyonu
-     */
-    const handlePrint = () => {
-        // Odaklanma ve yazdırma komutu
-        window.focus();
-        setTimeout(() => {
-            window.print();
-        }, 100);
-    };
+  const handlePrint = (e) => {
+    e.preventDefault();
+    try {
+      window.focus();
+      if (typeof window.print === 'function') {
+        window.print();
+      } else {
+        document.execCommand('print', false, null);
+      }
+    } catch (error) {
+      console.error("Yazdırma hatası:", error);
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans overflow-hidden">
+  return (
+    <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans overflow-hidden relative text-slate-900">
+      
+      {/* SIDEBAR */}
+      <aside className="w-full md:w-96 bg-white border-r border-slate-200 flex flex-col h-screen print:hidden shadow-xl z-10">
+        <div className="p-6 border-b border-slate-100 bg-blue-900 text-white flex justify-between items-start">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Library size={28} className="text-blue-300" />
+              <h1 className="text-xl font-bold tracking-tight leading-tight">Kurumsal Afiş Paneli</h1>
+            </div>
+            <p className="text-xs text-blue-200 font-medium uppercase tracking-wider italic">Katalog Tarama QR Jeneratörü</p>
+          </div>
+          <button 
+            onClick={() => setIsInfoOpen(true)}
+            className="p-2 hover:bg-blue-800 rounded-lg transition-colors text-blue-200"
+            title="Uygulama Hakkında"
+          >
+            <HelpCircle size={24} />
+          </button>
+        </div>
 
-            {/* SIDEBAR */}
-            <aside className="w-full md:w-96 bg-white border-r border-slate-200 flex flex-col h-screen print:hidden shadow-xl z-10">
-                <div className="p-6 border-b border-slate-100 bg-blue-900 text-white">
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                            <Library size={28} className="text-blue-300" />
-                            <h1 className="text-xl font-bold tracking-tight leading-tight">Kurumsal Afiş Paneli</h1>
-                        </div>
-                        <button
-                            onClick={() => setShowInfoModal(true)}
-                            className="p-2 hover:bg-blue-800 rounded-lg transition-colors text-blue-200 hover:text-white"
-                            title="Hakkında"
-                        >
-                            <Info size={20} />
-                        </button>
-                    </div>
-                    <p className="text-xs text-blue-200 font-medium">Katalog Tarama QR Jeneratörü</p>
-                </div>
+        <div className="p-4 bg-slate-50 border-b border-slate-100">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input
+              type="text"
+              placeholder="Kütüphane veya şehir ara..."
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none transition-all shadow-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
 
-                <div className="p-4 bg-slate-50 border-b border-slate-100">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Kütüphane veya şehir ara..."
-                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none transition-all shadow-sm"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                </div>
+        {/* Çoklu Kütüphane Seçimi / Şehir Ağı Bilgisi */}
+        <div className="bg-blue-50/50 px-6 py-4 border-b border-blue-100">
+          <div className="flex items-center gap-2 text-blue-900 font-bold text-[10px] uppercase tracking-widest mb-2">
+            <Layers size={14} />
+            Şehir Kütüphane Ağı
+          </div>
+          <p className="text-[11px] text-blue-700 leading-relaxed italic">
+            <strong>{selectedLib.city}</strong> ilindeki tüm kütüphaneler sisteme dahildir. Kullanıcılar tarama ekranında diğer kütüphaneleri de seçebilirler.
+          </p>
+        </div>
 
-                <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
-                    {filteredLibraries.map(lib => (
-                        <button
-                            key={lib.name}
-                            onClick={() => setSelectedLib(lib)}
-                            className={`w-full text-left px-4 py-3 rounded-lg flex items-start gap-3 transition-all ${selectedLib.name === lib.name
-                                ? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-200'
-                                : 'hover:bg-slate-50 text-slate-600'
-                                }`}
-                        >
-                            <MapPin size={18} className={`mt-0.5 shrink-0 ${selectedLib.name === lib.name ? 'text-blue-700' : 'text-slate-300'}`} />
-                            <span className="text-sm font-medium leading-snug">{lib.name}</span>
-                        </button>
-                    ))}
-                    {filteredLibraries.length === 0 && (
-                        <div className="p-12 text-center text-slate-400">
-                            <Info size={32} className="mx-auto mb-3 opacity-20" />
-                            <p className="text-sm">Eşleşen kütüphane bulunamadı.</p>
-                        </div>
-                    )}
-                </div>
+        <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+          {filteredLibraries.map(lib => (
+            <button
+              key={lib.name}
+              onClick={() => setSelectedLib(lib)}
+              className={`w-full text-left px-4 py-3 rounded-lg flex items-start gap-3 transition-all ${
+                selectedLib.name === lib.name 
+                ? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-200' 
+                : 'hover:bg-slate-50 text-slate-600'
+              }`}
+            >
+              <MapPin size={18} className={`mt-0.5 shrink-0 ${selectedLib.name === lib.name ? 'text-blue-700' : 'text-slate-300'}`} />
+              <span className="text-sm font-medium leading-snug">{lib.name}</span>
+            </button>
+          ))}
+          {filteredLibraries.length === 0 && (
+            <div className="p-12 text-center text-slate-400">
+              <Info size={32} className="mx-auto mb-3 opacity-20" />
+              <p className="text-sm">Eşleşen kütüphane bulunamadı.</p>
+            </div>
+          )}
+        </div>
 
-                <div className="p-4 bg-white border-t border-slate-100">
-                    <button
-                        onClick={handlePrint}
-                        className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-transform"
-                    >
-                        <Printer size={22} />
-                        AFİŞİ YAZDIR (A4)
-                    </button>
-                </div>
-            </aside>
+        <div className="p-4 bg-white border-t border-slate-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="w-full bg-blue-700 hover:bg-blue-800 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all"
+          >
+            <Printer size={22} />
+            AFİŞİ YAZDIR (A4)
+          </button>
+        </div>
+      </aside>
 
-            {/* ÖNİZLEME */}
-            <main className="flex-1 p-4 md:p-8 flex justify-center items-start bg-slate-200 overflow-y-auto print:bg-white print:p-0 print:m-0 print:overflow-visible">
+      {/* ÖNİZLEME ALANI */}
+      <main className="flex-1 p-4 md:p-8 flex justify-center items-start bg-slate-200 overflow-y-auto print:bg-white print:p-0 print:m-0 print:overflow-visible">
+        
+        <div 
+          id="poster-canvas"
+          className="bg-white shadow-2xl relative flex flex-col items-center justify-between text-center print:shadow-none print:m-0 print:border-none"
+          style={{
+            width: '210mm',
+            height: '297mm',
+            padding: '25mm 20mm',
+            boxSizing: 'border-box',
+            backgroundColor: 'white'
+          }}
+        >
+          {/* HEADER SECTION */}
+          <div className="w-full space-y-6">
+            <div className="flex flex-col items-center">
+              {/* Çoklu Seçim / Ağ Rozeti */}
+              <div className="mb-8 flex items-center gap-2 px-6 py-2 bg-blue-900 text-white border border-blue-900 rounded-full font-bold text-[11px] tracking-widest uppercase shadow-sm">
+                <Layers size={14} />
+                ŞEHİR KÜTÜPHANE AĞI ERİŞİMİ
+              </div>
 
-                <div
-                    id="poster-canvas"
-                    className="bg-white shadow-2xl relative flex flex-col items-center justify-between text-center print:shadow-none print:m-0"
-                    style={{
-                        width: '210mm',
-                        height: '297mm',
-                        padding: '25mm 20mm',
-                        boxSizing: 'border-box',
-                        backgroundColor: 'white'
-                    }}
-                >
-                    {/* HEADER */}
-                    <div className="w-full space-y-6">
-                        <div className="flex flex-col items-center">
-                            <div className="w-16 h-1.5 bg-blue-900 rounded-full mb-10"></div>
-                            <h1 className={`font-black text-slate-900 uppercase leading-[1.1] tracking-tight mb-4
+              <div className="w-16 h-1 bg-slate-200 rounded-full mb-10"></div>
+              
+              <h1 className={`font-black text-slate-900 uppercase leading-[1.1] tracking-tight mb-4
                 ${selectedLib.name.length > 50 ? 'text-4xl' : selectedLib.name.length > 35 ? 'text-5xl' : 'text-6xl'}`}>
-                                {selectedLib.name}
-                            </h1>
-                            <div className="w-full flex items-center justify-center gap-4 my-8">
-                                <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-slate-200"></div>
-                                <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
-                                    KATALOG TARAMA
-                                </p>
-                                <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-slate-200"></div>
-                            </div>
-                        </div>
-                    </div>
+                {selectedLib.name}
+              </h1>
+              
+              <div className="w-full flex items-center justify-center gap-4 my-8">
+                <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-slate-200"></div>
+                <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
+                  KATALOG TARAMA
+                </p>
+                <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-slate-200"></div>
+              </div>
+            </div>
+          </div>
 
-                    {/* QR */}
-                    <div className="flex-1 flex flex-col items-center justify-center w-full">
-                        <div className="relative p-10 bg-white border-2 border-slate-50 rounded-[3rem] shadow-sm">
-                            <img
-                                src={qrImageUrl}
-                                alt="QR Kod"
-                                className="w-[320px] h-[320px] object-contain"
-                            />
-                            <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-900 rounded-tl-2xl"></div>
-                            <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-900 rounded-tr-2xl"></div>
-                            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-900 rounded-bl-2xl"></div>
-                            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-900 rounded-br-2xl"></div>
-                        </div>
-                        <div className="mt-12 space-y-3">
-                            <p className="text-3xl font-extrabold text-slate-800 tracking-tight">
-                                Kataloğu taramak için okutunuz
-                            </p>
-                            <p className="text-xl text-slate-500 font-medium italic">
-                                (Kamera veya QR okuyucu uygulaması ile)
-                            </p>
-                            <p className="text-sm text-slate-400 font-medium mt-4">
-                                * Açılan ekranda ildeki diğer kütüphaneleri de seçebilirsiniz.
-                            </p>
-                        </div>
-                    </div>
+          {/* QR SECTION */}
+          <div className="flex-1 flex flex-col items-center justify-center w-full relative">
+            <div className="relative p-10 bg-white border-2 border-slate-50 rounded-[3rem] shadow-sm">
+              <img 
+                src={qrImageUrl} 
+                alt="Library QR"
+                className="w-[320px] h-[320px] object-contain"
+              />
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-900 rounded-tl-2xl"></div>
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-900 rounded-tr-2xl"></div>
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-900 rounded-bl-2xl"></div>
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-900 rounded-br-2xl"></div>
+            </div>
 
-                    {/* FOOTER */}
-                    <div className="w-full pt-10">
-                        <div className="bg-slate-50 rounded-2xl py-6 px-8 flex flex-col items-center gap-3 border border-slate-100">
-                            <div className="flex items-center gap-2 text-blue-900">
-                                <Globe size={20} />
-                                <span className="text-lg font-mono font-bold tracking-tight select-all">
-                                    {targetUrl}
-                                </span>
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <p className="text-sm font-black text-slate-900 tracking-[0.4em] uppercase">
-                                    T.C. KÜLTÜR VE TURİZM BAKANLIĞI
-                                </p>
-                                <p className="text-[10px] font-bold text-slate-400 tracking-[0.1em] mt-1 uppercase">
-                                    Kütüphaneler ve Yayımlar Genel Müdürlüğü
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-blue-900 rotate-45 translate-x-24 -translate-y-24"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-100 rotate-45 -translate-x-12 translate-y-12"></div>
+            <div className="mt-10 space-y-5 px-10">
+              <p className="text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">
+                Kataloğu taramak için okutunuz
+              </p>
+              
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center gap-2 text-blue-800 font-black text-[13px] uppercase tracking-tight italic">
+                   <Navigation size={14} />
+                   Tarama Ekranı Bilgilendirmesi
                 </div>
-            </main>
+                <p className="text-slate-600 font-semibold text-base leading-relaxed max-w-lg">
+                   Açılan ekranda <strong className="text-blue-900 underline decoration-blue-200 decoration-2">{selectedLib.city}</strong> ilindeki diğer kütüphaneleri de <br/> 
+                   <span className="text-blue-800">toplu veya tek tek seçebilirsiniz.</span>
+                </p>
+              </div>
+            </div>
+          </div>
 
-            {/* INFO MODAL */}
-            {showInfoModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm print:hidden">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-200">
-                        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                <Info size={20} className="text-blue-600" />
-                                Hakkında
-                            </h2>
-                            <button
-                                onClick={() => setShowInfoModal(false)}
-                                className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div className="p-6 space-y-4">
-                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-blue-900 text-sm leading-relaxed">
-                                <p>
-                                    <strong>Kurumsal Afiş Paneli</strong>, kütüphaneler için özelleştirilmiş QR kodlu afişler oluşturur.
-                                    Seçilen kütüphanenin katalog tarama sayfasına yönlendiren QR kodları otomatik olarak üretilir ve
-                                    A4 boyutunda baskıya hazır hale getirilir.
-                                </p>
-                            </div>
+          {/* FOOTER SECTION */}
+          <div className="w-full pt-10">
+            <div className="bg-slate-50 rounded-2xl py-6 px-8 flex flex-col items-center gap-3 border border-slate-100">
+              <div className="flex items-center gap-2 text-blue-900">
+                <Globe size={20} />
+                <span className="text-lg font-mono font-bold tracking-tight">
+                  {targetUrl}
+                </span>
+              </div>
+              <div className="flex flex-col items-center">
+                <p className="text-sm font-black text-slate-900 tracking-[0.4em] uppercase">
+                  T.C. KÜLTÜR VE TURİZM BAKANLIĞI
+                </p>
+                <p className="text-[10px] font-bold text-slate-400 tracking-[0.1em] mt-1 uppercase">
+                  Kütüphaneler ve Yayımlar Genel Müdürlüğü
+                </p>
+              </div>
+            </div>
+          </div>
 
-                            <div className="space-y-2">
-                                <h3 className="text-sm font-semibold text-slate-900">Özellikler</h3>
-                                <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
-                                    <li>81 il halk kütüphanesi veritabanı</li>
-                                    <li>Otomatik QR kod oluşturma</li>
-                                    <li>Anlık önizleme</li>
-                                    <li>Baskı optimizasyonu (A4)</li>
-                                    <li>İl genelindeki diğer kütüphaneleri de seçebilme imkanı</li>
-                                </ul>
-                            </div>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-900 rotate-45 translate-x-24 -translate-y-24 print:bg-blue-900"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-100 rotate-45 -translate-x-12 translate-y-12 print:bg-blue-100"></div>
+        </div>
+      </main>
 
-                            <div className="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
-                                <div className="text-xs text-slate-400">
-                                    v1.0.0
-                                </div>
-                                <a
-                                    href="https://ismailkaraca.com.tr/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
-                                >
-                                    <span>Geliştirici:</span>
-                                    <span className="font-bold">İsmail Karaca</span>
-                                    <Globe size={14} />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+      {/* BİLGİLENDİRME MODALI */}
+      {isInfoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 bg-blue-900 text-white flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <HelpCircle size={24} className="text-blue-300" />
+                <h2 className="text-xl font-bold">Uygulama Rehberi</h2>
+              </div>
+              <button onClick={() => setIsInfoOpen(false)} className="hover:bg-blue-800 p-1 rounded-full transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="p-8 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+              <section className="space-y-3">
+                <h3 className="font-bold text-slate-900 flex items-center gap-2 underline decoration-blue-500 decoration-2 underline-offset-4">
+                  <Library size={18} className="text-blue-700" />
+                  Uygulama Amacı
+                </h3>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Bu araç, Türkiye genelindeki <strong>İl Halk Kütüphaneleri</strong> için katalog tarama QR kodlu afişler üretmek amacıyla geliştirilmiştir. Kütüphanenize gelen okuyucular, kitap arama işlemlerini kendi telefonlarından kolayca yapabilirler.
+                </p>
+              </section>
+
+              <section className="space-y-4 bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                <div className="flex items-center gap-2 font-bold text-blue-900 uppercase tracking-wider text-xs">
+                  <Layers size={20} />
+                  Kütüphane Ağı ve Çoklu Seçim
                 </div>
-            )}
+                <p className="text-blue-800 text-[13px] leading-relaxed font-medium">
+                   Uygulama, seçilen il için Koha sistemi üzerinden genel bir erişim kodu oluşturur. Afiş üzerindeki bilgilendirme sayesinde okuyucu, tarama ekranına ulaştığında sadece İl Halk kütüphanesini değil;
+                </p>
+                <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
+                  <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
+                    <CheckCircle size={12} /> İlçe Kütüphaneleri
+                  </div>
+                  <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
+                    <CheckCircle size={12} /> Çocuk Kütüphaneleri
+                  </div>
+                  <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
+                    <CheckCircle size={12} /> Şube Kütüphaneleri
+                  </div>
+                  <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
+                    <CheckCircle size={12} /> Birim Kütüphaneleri
+                  </div>
+                </div>
+                <p className="text-blue-800 text-xs italic font-semibold">
+                   seçeneklerini toplu veya tek tek filtreleyebileceğini öğrenir. Bu özellik, kütüphane ağının tamamına tek afişle erişim sağlar.
+                </p>
+              </section>
 
-            <style>{`
+              <div className="pt-6 border-t border-slate-100 flex flex-col items-center gap-4 text-center">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Geliştirici</p>
+                  <p className="text-xl font-black text-slate-900">İsmail Karaca</p>
+                </div>
+                <a 
+                  href="https://ismailkaraca.com.tr/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-black text-white rounded-full font-bold text-sm transition-all group shadow-md"
+                >
+                  <Globe size={16} />
+                  ismailkaraca.com.tr
+                  <ExternalLink size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* KRİTİK PRINT STİLLERİ */}
+      <style>{`
         @media print {
-          @page { 
-            size: A4; 
-            margin: 0 !important; 
+          @page {
+            size: A4;
+            margin: 0 !important;
           }
           html, body {
             height: 100%;
-            margin: 0 !important; 
+            margin: 0 !important;
             padding: 0 !important;
+            overflow: visible !important;
           }
-          aside { 
-            display: none !important; 
+          aside, .print\\:hidden {
+            display: none !important;
           }
-          main { 
+          main {
             position: absolute !important;
             top: 0 !important;
             left: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            margin: 0 !important; 
-            padding: 0 !important; 
+            margin: 0 !important;
+            padding: 0 !important;
             background: white !important;
+            display: block !important;
             overflow: visible !important;
           }
-          #poster-canvas { 
-            box-shadow: none !important; 
-            margin: 0 auto !important; 
+          #poster-canvas {
+            box-shadow: none !important;
+            margin: 0 auto !important;
             border: none !important;
             position: relative !important;
+            width: 210mm !important;
+            height: 297mm !important;
           }
           .custom-scrollbar { display: none; }
         }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default App;
