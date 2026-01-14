@@ -109,7 +109,7 @@ const App = () => {
     }, [searchTerm]);
 
     const normalizedCity = normalizeUrl(selectedLib.city);
-    const targetUrl = `https://koha.ekutuphane.gov.tr/ara/${normalizedCity}.html`;
+    const targetUrl = `koha.ekutuphane.gov.tr/ara/${normalizedCity}.html`;
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(targetUrl)}&bgcolor=ffffff&color=1e3a8a&qzone=1`;
 
     const handlePrint = (e) => {
