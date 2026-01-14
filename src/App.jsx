@@ -140,8 +140,15 @@ const App = () => {
         e.preventDefault();
         setFormStatus('loading');
 
-        // GOOGLE SHEETS WEB APP URL (Buraya kendi Apps Script URL'nizi yapıştırın)
-        const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+        // GOOGLE SHEETS WEB APP URL
+        // Vercel Environment Variable: REACT_APP_GOOGLE_SCRIPT_URL
+        const SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
+
+        if (!SCRIPT_URL) {
+            console.error("HATA: Google Apps Script URL tanımlanmamış. Lütfen 'REACT_APP_GOOGLE_SCRIPT_URL' çevre değişkenini kontrol edin.");
+            setFormStatus('error');
+            return;
+        }
 
         try {
             // Not: Google Sheets'e bağlamak için Google Apps Script 'Web App' olarak yayınlanmalıdır.
