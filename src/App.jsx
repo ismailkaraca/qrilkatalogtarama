@@ -232,8 +232,7 @@ const App = () => {
                             </h1>
 
                             <div className="w-full flex items-center justify-center gap-4 my-8">
-                                <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-slate-200"></div>
-                                <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
+                                                              <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
                                     KATALOG TARAMA
                                 </p>
                                 <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-slate-200"></div>
