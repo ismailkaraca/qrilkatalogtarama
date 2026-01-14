@@ -243,6 +243,9 @@ const App = () => {
                             <p className="text-xl text-slate-500 font-medium italic">
                                 (Kamera veya QR okuyucu uygulaması ile)
                             </p>
+                            <p className="text-sm text-slate-400 font-medium mt-4">
+                                * Açılan ekranda ildeki diğer kütüphaneleri de seçebilirsiniz.
+                            </p>
                         </div>
                     </div>
 
@@ -303,6 +306,7 @@ const App = () => {
                                     <li>Otomatik QR kod oluşturma</li>
                                     <li>Anlık önizleme</li>
                                     <li>Baskı optimizasyonu (A4)</li>
+                                    <li>İl genelindeki diğer kütüphaneleri de seçebilme imkanı</li>
                                 </ul>
                             </div>
 
