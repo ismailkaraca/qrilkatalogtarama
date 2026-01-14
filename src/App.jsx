@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Printer, Search, MapPin, Library, Globe, Info } from 'lucide-react';
+import { Printer, Search, MapPin, Library, Globe, Info, X } from 'lucide-react';
 
 /**
  * TÜRKİYE'NİN İL HALK KÜTÜPHANELERİ LİSTESİ
@@ -100,6 +100,7 @@ const normalizeUrl = (text) => {
 const App = () => {
     const [selectedLib, setSelectedLib] = useState(LIBRARIES.find(l => l.city === "Ankara"));
     const [searchTerm, setSearchTerm] = useState("");
+    const [showInfoModal, setShowInfoModal] = useState(false);
 
     const filteredLibraries = useMemo(() => {
         return LIBRARIES.filter(lib =>
@@ -128,9 +129,18 @@ const App = () => {
             {/* SIDEBAR */}
             <aside className="w-full md:w-96 bg-white border-r border-slate-200 flex flex-col h-screen print:hidden shadow-xl z-10">
                 <div className="p-6 border-b border-slate-100 bg-blue-900 text-white">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Library size={28} className="text-blue-300" />
-                        <h1 className="text-xl font-bold tracking-tight leading-tight">Kurumsal Afiş Paneli</h1>
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                            <Library size={28} className="text-blue-300" />
+                            <h1 className="text-xl font-bold tracking-tight leading-tight">Kurumsal Afiş Paneli</h1>
+                        </div>
+                        <button
+                            onClick={() => setShowInfoModal(true)}
+                            className="p-2 hover:bg-blue-800 rounded-lg transition-colors text-blue-200 hover:text-white"
+                            title="Hakkında"
+                        >
+                            <Info size={20} />
+                        </button>
                     </div>
                     <p className="text-xs text-blue-200 font-medium">Katalog Tarama QR Jeneratörü</p>
                 </div>
@@ -154,8 +164,8 @@ const App = () => {
                             key={lib.name}
                             onClick={() => setSelectedLib(lib)}
                             className={`w-full text-left px-4 py-3 rounded-lg flex items-start gap-3 transition-all ${selectedLib.name === lib.name
-                                    ? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-200'
-                                    : 'hover:bg-slate-50 text-slate-600'
+                                ? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-200'
+                                : 'hover:bg-slate-50 text-slate-600'
                                 }`}
                         >
                             <MapPin size={18} className={`mt-0.5 shrink-0 ${selectedLib.name === lib.name ? 'text-blue-700' : 'text-slate-300'}`} />
@@ -260,6 +270,61 @@ const App = () => {
                     <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-100 rotate-45 -translate-x-12 translate-y-12"></div>
                 </div>
             </main>
+
+            {/* INFO MODAL */}
+            {showInfoModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm print:hidden">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <Info size={20} className="text-blue-600" />
+                                Hakkında
+                            </h2>
+                            <button
+                                onClick={() => setShowInfoModal(false)}
+                                className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-blue-900 text-sm leading-relaxed">
+                                <p>
+                                    <strong>Kurumsal Afiş Paneli</strong>, kütüphaneler için özelleştirilmiş QR kodlu afişler oluşturur.
+                                    Seçilen kütüphanenin katalog tarama sayfasına yönlendiren QR kodları otomatik olarak üretilir ve
+                                    A4 boyutunda baskıya hazır hale getirilir.
+                                </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-semibold text-slate-900">Özellikler</h3>
+                                <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
+                                    <li>81 il halk kütüphanesi veritabanı</li>
+                                    <li>Otomatik QR kod oluşturma</li>
+                                    <li>Anlık önizleme</li>
+                                    <li>Baskı optimizasyonu (A4)</li>
+                                </ul>
+                            </div>
+
+                            <div className="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
+                                <div className="text-xs text-slate-400">
+                                    v1.0.0
+                                </div>
+                                <a
+                                    href="https://ismailkaraca.com.tr/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+                                >
+                                    <span>Geliştirici:</span>
+                                    <span className="font-bold">İsmail Karaca</span>
+                                    <Globe size={14} />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>{`
         @media print {
