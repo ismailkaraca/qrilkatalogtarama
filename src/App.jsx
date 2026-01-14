@@ -178,8 +178,8 @@ const App = () => {
                             key={lib.name}
                             onClick={() => setSelectedLib(lib)}
                             className={`w-full text-left px-4 py-3 rounded-lg flex items-start gap-3 transition-all ${selectedLib.name === lib.name
-                                    ? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-200'
-                                    : 'hover:bg-slate-50 text-slate-600'
+                                ? 'bg-blue-50 text-blue-900 shadow-sm ring-1 ring-blue-200'
+                                : 'hover:bg-slate-50 text-slate-600'
                                 }`}
                         >
                             <MapPin size={18} className={`mt-0.5 shrink-0 ${selectedLib.name === lib.name ? 'text-blue-700' : 'text-slate-300'}`} />
@@ -215,7 +215,7 @@ const App = () => {
                     style={{
                         width: '210mm',
                         height: '297mm',
-                        padding: '25mm 20mm',
+                        padding: '10mm 20mm',
                         boxSizing: 'border-box',
                         backgroundColor: 'white'
                     }}
@@ -232,7 +232,7 @@ const App = () => {
                             </h1>
 
                             <div className="w-full flex items-center justify-center gap-4 my-8">
-                                                              <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
+                                <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
                                     KATALOG TARAMA
                                 </p>
                                 <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-slate-200"></div>
