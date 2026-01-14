@@ -261,7 +261,7 @@ const App = () => {
                             <div className="flex flex-col items-center gap-3">
                                 <div className="flex items-center gap-2 text-blue-800 font-black text-[13px] uppercase tracking-tight italic">
                                     <Navigation size={14} />
-                                    Tarama Ekranı Bilgilendirmesi
+                                    TARAMA EKRANI BİLGİLENDİRMESİ
                                 </div>
                                 <p className="text-slate-600 font-semibold text-base leading-relaxed max-w-lg">
                                     Açılan ekranda <strong className="text-blue-900 underline decoration-blue-200 decoration-2">{selectedLib.city}</strong> ilindeki diğer kütüphaneleri de <br />
