@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Printer, Search, MapPin, Library, Globe, Info, X, ExternalLink, HelpCircle, Layers, CheckCircle, Navigation } from 'lucide-react';
+import { Printer, Search, MapPin, Library, Globe, Info, X, ExternalLink, HelpCircle, Layers, CheckCircle, Navigation, Send, Phone, Mail, User } from 'lucide-react';
 
 /**
  * TÜRKİYE'NİN İL HALK KÜTÜPHANELERİ LİSTESİ
@@ -34,7 +34,7 @@ const LIBRARIES = [
     { city: "Düzce", name: "DÜZCE İL HALK KÜTÜPHANESİ" },
     { city: "Edirne", name: "EDİRNE İL HALK KÜTÜPHANESİ" },
     { city: "Elazığ", name: "ELAZIĞ İL HALK KÜTÜPHANESİ" },
-    { city: "Erzincan", name: "ERZİNCAN 100. YIL İL HALK KÜTÜPHANESİ" },
+    { city: "Erzincan", name: "ERZİNCAN 100. Yıl İL HALK KÜTÜPHANESİ" },
     { city: "Erzurum", name: "ERZURUM İL HALK KÜTÜPHANESİ" },
     { city: "Eskişehir", name: "ESKİŞEHİR İL HALK KÜTÜPHANESİ" },
     { city: "Gaziantep", name: "GAZİANTEP MÜNİFPAŞA 100. YIL İL HALK KÜTÜPHANESİ" },
@@ -80,7 +80,7 @@ const LIBRARIES = [
     { city: "Tekirdağ", name: "TEKİRDAĞ NAMIK KEMAL İL HALK KÜTÜPHANESİ" },
     { city: "Tokat", name: "TOKAT İL HALK KÜTÜPHANESİ" },
     { city: "Trabzon", name: "TRABZON İL HALK KÜTÜPHANESİ" },
-    { city: "Tunceli", name: "TUNCELİ HÜSEYİN GÜNTAŞ İL HALK KÜTÜPHANESİ" },
+    { city: "Tunceli", name: "TUNCELI HÜSEYİN GÜNTAŞ İL HALK KÜTÜPHANESİ" },
     { city: "Uşak", name: "UŞAK İSKENDER PALA İL HALK KÜTÜPHANESİ" },
     { city: "Van", name: "VAN İL HALK KÜTÜPHANESİ" },
     { city: "Yalova", name: "YALOVA İL HALK KÜTÜPHANESİ" },
@@ -101,6 +101,16 @@ const App = () => {
     const [selectedLib, setSelectedLib] = useState(LIBRARIES.find(l => l.city === "Ankara"));
     const [searchTerm, setSearchTerm] = useState("");
     const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    
+    // Form States
+    const [formData, setFormData] = useState({
+        libraryName: '',
+        corporateEmail: '',
+        fullName: '',
+        phone: ''
+    });
+    const [formStatus, setFormStatus] = useState('idle'); // idle, loading, success, error
 
     const filteredLibraries = useMemo(() => {
         return LIBRARIES.filter(lib =>
@@ -123,6 +133,38 @@ const App = () => {
             }
         } catch (error) {
             console.error("Yazdırma hatası:", error);
+        }
+    };
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        setFormStatus('loading');
+
+        // GOOGLE SHEETS WEB APP URL (Buraya kendi Apps Script URL'nizi yapıştırın)
+        const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+
+        try {
+            // Not: Google Sheets'e bağlamak için Google Apps Script 'Web App' olarak yayınlanmalıdır.
+            // Bu örnekte verileri JSON olarak POST ediyoruz.
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // CORS sorunlarını aşmak için
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    timestamp: new Date().toISOString()
+                })
+            });
+
+            setFormStatus('success');
+            setTimeout(() => {
+                setIsFormOpen(false);
+                setFormStatus('idle');
+                setFormData({ libraryName: '', corporateEmail: '', fullName: '', phone: '' });
+            }, 3000);
+        } catch (error) {
+            setFormStatus('error');
+            console.error("Form gönderim hatası:", error);
         }
     };
 
@@ -161,15 +203,21 @@ const App = () => {
                     </div>
                 </div>
 
-                {/* Çoklu Kütüphane Seçimi / Şehir Ağı Bilgisi */}
-                <div className="bg-blue-50/50 px-6 py-4 border-b border-blue-100">
-                    <div className="flex items-center gap-2 text-blue-900 font-bold text-[10px] uppercase tracking-widest mb-2">
-                        <Layers size={14} />
-                        Şehir Kütüphane Ağı
-                    </div>
-                    <p className="text-[11px] text-blue-700 leading-relaxed italic">
-                        <strong>{selectedLib.city}</strong> ilindeki tüm kütüphaneler sisteme dahildir. Kullanıcılar tarama ekranında diğer kütüphaneleri de seçebilirler.
-                    </p>
+                {/* Özel Talep Butonu */}
+                <div className="p-4 border-b border-slate-100 bg-orange-50/50">
+                    <button 
+                        onClick={() => setIsFormOpen(true)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-white border border-orange-200 rounded-xl hover:border-orange-400 hover:shadow-md transition-all group"
+                    >
+                        <div className="flex items-center gap-3 text-left">
+                            <Send size={20} className="text-orange-600" />
+                            <div>
+                                <p className="text-xs font-bold text-orange-900">Özel Afiş/Link Talebi</p>
+                                <p className="text-[10px] text-orange-700">Listede yoksa buraya tıklayın</p>
+                            </div>
+                        </div>
+                        <ExternalLink size={16} className="text-orange-300 group-hover:text-orange-600 transition-colors" />
+                    </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
@@ -223,14 +271,11 @@ const App = () => {
                     {/* HEADER SECTION */}
                     <div className="w-full space-y-6">
                         <div className="flex flex-col items-center">
-
                             <div className="w-16 h-1 bg-slate-200 rounded-full mb-10"></div>
-
                             <h1 className={`font-black text-slate-900 uppercase leading-[1.1] tracking-tight mb-4
-                ${selectedLib.name.length > 50 ? 'text-4xl' : selectedLib.name.length > 35 ? 'text-5xl' : 'text-6xl'}`}>
+                                ${selectedLib.name.length > 50 ? 'text-4xl' : selectedLib.name.length > 35 ? 'text-5xl' : 'text-6xl'}`}>
                                 {selectedLib.name}
                             </h1>
-
                             <div className="w-full flex items-center justify-center gap-4 my-8">
                                 <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
                                     KATALOG TARAMA
@@ -296,6 +341,116 @@ const App = () => {
                 </div>
             </main>
 
+            {/* TALEP FORMU MODALI */}
+            {isFormOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-in fade-in duration-200">
+                    <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="p-8 bg-orange-600 text-white flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <Send size={24} />
+                                <h2 className="text-xl font-bold">Özel Talep Formu</h2>
+                            </div>
+                            <button onClick={() => setIsFormOpen(false)} className="hover:bg-orange-500 p-1.5 rounded-full transition-colors">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleFormSubmit} className="p-8 space-y-5">
+                            {formStatus === 'success' ? (
+                                <div className="text-center py-10 space-y-4 animate-in fade-in">
+                                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                                        <CheckCircle size={32} />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900">Talebiniz Alındı!</h3>
+                                    <p className="text-slate-500 text-sm">Verileriniz Google Sheets'e başarıyla aktarıldı. En kısa sürede sizinle iletişime geçeceğiz.</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="space-y-4 text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-4 italic leading-relaxed text-center">
+                                        Listede olmayan kütüphaneler veya özel tasarım linkleri için lütfen aşağıdaki bilgileri doldurunuz.
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 flex items-center gap-2">
+                                            <Library size={14} /> KÜTÜPHANE ADI
+                                        </label>
+                                        <input
+                                            required
+                                            type="text"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                            placeholder="Örn: X İlçesi İlçe Halk Kütüphanesi"
+                                            value={formData.libraryName}
+                                            onChange={(e) => setFormData({...formData, libraryName: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 flex items-center gap-2">
+                                            <User size={14} /> AD SOYAD
+                                        </label>
+                                        <input
+                                            required
+                                            type="text"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                            value={formData.fullName}
+                                            onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 flex items-center gap-2">
+                                            <Mail size={14} /> KURUMSAL MAİL
+                                        </label>
+                                        <input
+                                            required
+                                            type="email"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                            placeholder="ornek@kultur.gov.tr"
+                                            value={formData.corporateEmail}
+                                            onChange={(e) => setFormData({...formData, corporateEmail: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 flex items-center gap-2">
+                                            <Phone size={14} /> TELEFON NO
+                                        </label>
+                                        <input
+                                            required
+                                            type="tel"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                            placeholder="05xx xxx xx xx"
+                                            value={formData.phone}
+                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <button
+                                        disabled={formStatus === 'loading'}
+                                        type="submit"
+                                        className={`w-full py-4 rounded-2xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 mt-4 ${
+                                            formStatus === 'loading' ? 'bg-slate-400 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-700 active:scale-95'
+                                        }`}
+                                    >
+                                        {formStatus === 'loading' ? 'Gönderiliyor...' : (
+                                            <>
+                                                <Send size={20} /> TALEBİ GÖNDER
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {formStatus === 'error' && (
+                                        <p className="text-center text-xs text-red-500 font-bold mt-2">
+                                            Bir hata oluştu. Lütfen tekrar deneyiniz.
+                                        </p>
+                                    )}
+                                </>
+                            )}
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* BİLGİLENDİRME MODALI */}
             {isInfoOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -311,40 +466,32 @@ const App = () => {
                         </div>
 
                         <div className="p-8 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
-                            <section className="space-y-3">
-                                <h3 className="font-bold text-slate-900 flex items-center gap-2 underline decoration-blue-500 decoration-2 underline-offset-4">
+                            <section className="space-y-3 text-center border-b pb-6">
+                                <h3 className="font-bold text-slate-900 flex items-center justify-center gap-2 underline decoration-blue-500 decoration-2 underline-offset-4">
                                     <Library size={18} className="text-blue-700" />
                                     Uygulama Amacı
                                 </h3>
                                 <p className="text-slate-600 text-sm leading-relaxed">
-                                    Bu araç, Türkiye genelindeki <strong>İl Halk Kütüphaneleri</strong> için katalog tarama QR kodlu afişler üretmek amacıyla geliştirilmiştir. Kütüphanenize gelen okuyucular, kitap arama işlemlerini kendi telefonlarından kolayca yapabilirler.
+                                    Türkiye genelindeki kütüphaneler için <strong>katalog tarama QR afişleri</strong> üretmeyi hedefler.
                                 </p>
                             </section>
 
                             <section className="space-y-4 bg-blue-50 p-5 rounded-2xl border border-blue-100">
                                 <div className="flex items-center gap-2 font-bold text-blue-900 uppercase tracking-wider text-xs">
-                                    <Layers size={20} />
-                                    Kütüphane Ağı ve Çoklu Seçim
+                                    <Layers size={18} />
+                                    Çoklu Kütüphane Seçimi ve Şehir Ağı
                                 </div>
                                 <p className="text-blue-800 text-[13px] leading-relaxed font-medium">
-                                    Uygulama, seçilen il için Koha sistemi üzerinden genel bir erişim kodu oluşturur. Afiş üzerindeki bilgilendirme sayesinde okuyucu, tarama ekranına ulaştığında sadece İl Halk kütüphanesini değil;
+                                    İl seçildiğinde oluşan kod, ildeki tüm kütüphane birimlerini kapsar. Afiş üzerindeki <strong>Bilgilendirme Notu</strong> sayesinde okuyucular tarama ekranında diğer birimleri (ilçe, çocuk vb.) filtreleyebilirler.
                                 </p>
-                                <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
-                                    <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
-                                        <CheckCircle size={12} /> İlçe Kütüphaneleri
-                                    </div>
-                                    <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
-                                        <CheckCircle size={12} /> Çocuk Kütüphaneleri
-                                    </div>
-                                    <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
-                                        <CheckCircle size={12} /> Şube Kütüphaneleri
-                                    </div>
-                                    <div className="bg-white p-2 rounded-lg text-blue-700 shadow-sm border border-blue-100 flex items-center gap-2">
-                                        <CheckCircle size={12} /> Birim Kütüphaneleri
-                                    </div>
-                                </div>
-                                <p className="text-blue-800 text-xs italic font-semibold">
-                                    seçeneklerini toplu veya tek tek filtreleyebileceğini öğrenir. Bu özellik, kütüphane ağının tamamına tek afişle erişim sağlar.
+                            </section>
+
+                            <section className="space-y-3 bg-orange-50 p-5 rounded-2xl border border-orange-100">
+                                <h3 className="font-bold text-orange-900 flex items-center gap-2 text-sm uppercase">
+                                    <Send size={18} /> Özel Afiş Talepleri
+                                </h3>
+                                <p className="text-orange-800 text-xs leading-relaxed">
+                                    Eğer kütüphaneniz listede yoksa veya sadece kütüphanenize özel (filtresiz) bir katalog linki isterseniz, <strong>Talep Formu</strong>'nu doldurabilirsiniz.
                                 </p>
                             </section>
 
