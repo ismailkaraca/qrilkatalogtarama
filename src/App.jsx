@@ -235,7 +235,6 @@ const App = () => {
                                 <p className="text-2xl font-bold text-blue-800 tracking-[0.25em] whitespace-nowrap uppercase">
                                     KATALOG TARAMA
                                 </p>
-                                <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-slate-200"></div>
                             </div>
                         </div>
                     </div>
